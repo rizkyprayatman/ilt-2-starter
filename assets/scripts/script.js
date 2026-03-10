@@ -1,11 +1,20 @@
+import {
+  generateMusicItemUsingInnerHTML,
+  generateMusicItemUsingTemplate,
+  getAllMusics,
+} from './utils.js';
+
 const drawerButton = document.querySelector('#drawer-button');
 const drawerNavigation = document.querySelector('#navList');
 
 // Get By Id
 const musicList = document.getElementById('musicList');
 
-// Get By Class Name
-const musicListContainer = document.querySelector('#music-list');
+// Get
+const musicListContainer = document.querySelector('#musicList');
+
+
+// musicList.parentElement.removeChild(musicList);
 
 function setupDrawer() {
   drawerButton.addEventListener('click', () => {
@@ -19,14 +28,51 @@ function setupDrawer() {
   });
 }
 
+function populateMusicWithTemplate(musics) {
+  musicList.replaceChildren();
+  const element = musics.map(generateMusicItemUsingTemplate);
+  musicList.append(...element);
+}
+
+function populateMusicWithInnerHTML(musics) {
+  const element = musics.map(generateMusicItemUsingInnerHTML);
+  musicList.innerHTML = element.join('');
+}
+
+function stopOtherAudio(currentAudio) {
+  const listOfAudioElement = document.querySelectorAll('audio');
+
+  listOfAudioElement.forEach((audioElement) => {
+    if (currentAudio !== audioElement) {
+      audioElement.pause();
+    }
+  });
+}
+
 function setupOnlyOneAudioIsPlaying() {
-  // Function ini dimanfaatkan untuk mengaktifkan satu audio saja.
+  const listOfAudioElement = document.querySelectorAll('audio');
+
+  listOfAudioElement.forEach((audioElement) => {
+    audioElement.addEventListener('play', (event) => {
+      const currentAudio = event.currentTarget;
+      stopOtherAudio(currentAudio);
+    });
+  });
 }
 
 function init() {
   setupDrawer();
 
   // Lakukan get musics dan render ke DOM di sini
+  const musics = getAllMusics();
+
+  if (!musicList || !musicListContainer) {
+    return;
+  }
+
+  populateMusicWithTemplate(musics);
+
+  // populateMusicWithInnerHTML()
 
   setupOnlyOneAudioIsPlaying();
 }

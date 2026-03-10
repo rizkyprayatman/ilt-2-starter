@@ -87,8 +87,50 @@ export function getAllMusics() {
 
 export function generateMusicItemUsingTemplate({ id, artLink, title, signature, audioLink }) {
   // Buatlah music item element dengan memanfaatkan <template> pada HTML.
+  const musicItemTemplate = document.getElementById('music-item-template');
+  const musicItemElement = musicItemTemplate.content.cloneNode(true);
+
+  const musicItem = musicItemElement.querySelector('[data-musicid]');
+  musicItem.setAttribute('data-musicid', id);
+
+  const musicArt = musicItemElement.getElementById('musicImage');
+  musicArt.setAttribute('src', artLink);
+  musicArt.setAttribute('alt', title);
+
+  const musicTitle = musicItemElement.getElementById('musicTitle');
+  musicTitle.textContent = title;
+
+  const musicSignature = musicItemElement.getElementById('musicSignature');
+  musicSignature.innerHTML = signature;
+
+  const audioPlayer = musicItemElement.getElementById('musicAudio');
+  audioPlayer.setAttribute('src', audioLink);
+
+  return musicItemElement;
 }
 
 export function generateMusicItemUsingInnerHTML({ id, artLink, title, signature, audioLink }) {
   // Buatlah music item element dalam bentuk string.
+  return `
+  <article class="music-list__item" data-musicid="${id}">
+        <div class="card">
+          <div class="card-image">
+            <img id="musicImage" src="${artLink}" alt="${title}" />
+          </div>
+          <div class="card-body">
+            <h3 id="musicTitle" class="card-body__title">${title}</h3>
+            <div id="musicSignature" class="card-body__copyright">
+              ${signature}
+            </div>
+            <audio
+              id="musicAudio"
+              class="music-list__item__audio"
+              controls
+              src="${audioLink}"
+              type="audio/mp3"
+              preload="none"
+            ></audio>
+          </div>
+        </div>
+      </article>`;
 }
